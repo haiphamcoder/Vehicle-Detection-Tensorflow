@@ -12,7 +12,7 @@ import time
 import csv
 import tensorflow as tf
 from utils import label_map_util
-from utils import visualization_utils as vis_util
+from utils.visualization import Visualization
 
 
 class MainDashboard(QMainWindow):
@@ -326,8 +326,10 @@ class ThreadClass(QThread):
                                  feed_dict={image_tensor: image_np_expanded})
 
                     # Visualization of the results of a detection.
+                    vis = Visualization()
+                    
                     (counter, csv_line) = \
-                        vis_util.visualize_boxes_and_labels_on_image_array(
+                        vis.visualize_boxes_and_labels_on_image_array(
                         capture.get(1),
                         input_frame,
                         np.squeeze(boxes),
@@ -356,10 +358,10 @@ class ThreadClass(QThread):
                     # when the vehicle passed over line and counted, make the color of ROI line green
                     if counter == 1:
                         cv.line(input_frame, (0, 200),
-                                (640, 200), (0, 0xFF, 0), 5)
+                                (640, 200), (0, 0xFF, 0), 3)
                     else:
                         cv.line(input_frame, (0, 200),
-                                (640, 200), (0, 0, 0xFF), 5)
+                                (640, 300), (0, 0, 0xFF), 3)
 
                     # insert information text to video frame
                     cv.rectangle(input_frame, (10, 275),
