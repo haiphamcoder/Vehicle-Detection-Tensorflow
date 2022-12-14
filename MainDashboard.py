@@ -1,5 +1,5 @@
 # This Python file uses the following encoding: utf-8
-from PyQt5.QtWidgets import QMainWindow, QHeaderView, QButtonGroup
+from PyQt5.QtWidgets import QMainWindow, QHeaderView, QFileDialog
 from PyQt5.QtCore import QFile, QTimer, QDateTime, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtMultimedia import QCameraInfo
 from PyQt5.QtGui import QStandardItemModel, QImage, QPixmap
@@ -10,6 +10,7 @@ import psutil
 import cv2 as cv
 import numpy as np
 import time
+import csv
 
 
 class MainDashboard(QMainWindow):
@@ -23,6 +24,12 @@ class MainDashboard(QMainWindow):
         uiFile.open(QFile.ReadOnly)
         self.ui = uic.loadUi(uiFile, self)
         uiFile.close()
+
+        # initialize .csv
+        with open('traffic_measurement.csv', 'w') as f:
+            writer = csv.writer(f)
+            csv_line = 'Vehicle Type/Size, Vehicle Color, Vehicle Movement Direction, Vehicle Speed (km/h)'
+            writer.writerows([csv_line.split(',')])
 
         self.onlineCam = QCameraInfo.availableCameras()
         self.listCam.addItems([c.description() for c in self.onlineCam])
@@ -49,14 +56,22 @@ class MainDashboard(QMainWindow):
         self.rdbCamera.setChecked(True)
         self.btnSelect.setEnabled(False)
         self.pathVideoFile.setEnabled(False)
-
         self.rdbCamera.toggled.connect(
             lambda: self.buttonState(self.rdbCamera))
         self.rdbVideoFile.toggled.connect(
             lambda: self.buttonState(self.rdbVideoFile))
+        self.btnSelect.clicked.connect(self.openFileNameDialog)
 
         self.actionQuit.triggered.connect(self.exit_program)
         self.btnClose.clicked.connect(self.exit_program)
+
+    def openFileNameDialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, "Open", "", "All Files (*);;MP4 Files (*.mp4);;AVI Files (*.avi)", options=options)
+        if fileName:
+            self.pathVideoFile.setText(fileName)
 
     def showTime(self):
         self.DateTime = QDateTime.currentDateTime()
@@ -127,7 +142,6 @@ class MainDashboard(QMainWindow):
         self.mainFrame.setScaledContents(True)
 
     def cvt_cv_qt(self, Image):
-        offset = 5
         rgb_img = cv.cvtColor(src=Image, code=cv.COLOR_BGR2RGB)
 
         h, w, ch = rgb_img.shape
@@ -145,8 +159,11 @@ class MainDashboard(QMainWindow):
             self.btnStop.setEnabled(True)
             self.btnStart.setEnabled(False)
 
-            global camIndex
-            camIndex = self.listCam.currentIndex()
+            global sourceVideo
+            if self.rdbCamera.isChecked():
+                sourceVideo = self.listCam.currentIndex()
+            elif self.rdbVideoFile.isChecked():
+                sourceVideo = self.pathVideoFile.text()
 
             # Opencv QThread
             self.worker = ThreadClass()
@@ -192,8 +209,8 @@ class ThreadClass(QThread):
     fps = pyqtSignal(int)
 
     def run(self):
-        global Capture
-        capture = cv.VideoCapture(camIndex)
+        global capture
+        capture = cv.VideoCapture(sourceVideo)
 
         capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
         capture.set(cv.CAP_PROP_FRAME_WIDTH, 640)
