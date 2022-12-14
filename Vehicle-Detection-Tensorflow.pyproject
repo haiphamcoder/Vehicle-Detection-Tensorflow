@@ -1,3 +1,3 @@
 {
-    "files": ["main.py","MainDashboard.py","MainUI.ui"]
+    "files": ["utils/label_map_util.py","main.py","utils/__init__.py","utils/visualization_utils.py","MainDashboard.py","MainUI.ui","utils/color_recognition_module/training_dataset/black/black1.png"]
 }
