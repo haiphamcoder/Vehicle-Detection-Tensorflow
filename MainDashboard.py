@@ -46,7 +46,7 @@ class MainDashboard(QMainWindow):
         self.btnStop.clicked.connect(self.StopDetection)
         self.rdbModelMobilenetV1.setChecked(True)
 
-        global  table_model
+        global table_model
         table_model = QStandardItemModel()
         header = ['Vehicle Type/Size', 'Vehicle Color', 'Vehicle Movement Direction', 'Vehicle Speed (km/h)']
         table_model.setHorizontalHeaderLabels(header)
@@ -85,6 +85,11 @@ class MainDashboard(QMainWindow):
         spinH = self.spinH
         spinH.setValue(4)
 
+        global ckbExportCSV
+        ckbExportCSV = self.ckbExportCSV
+        ckbExportCSV.setChecked(True)
+        global ckbExportVideo
+        ckbExportVideo = self.ckbExportVideo
         self.actionQuit.triggered.connect(self.exit_program)
         self.btnClose.clicked.connect(self.exit_program)
 
@@ -165,77 +170,67 @@ class MainDashboard(QMainWindow):
         self.mainFrame.setPixmap(original)
         self.mainFrame.setScaledContents(True)
 
-    def StartWebCam(self):
-        try:
+    def StartDetection(self):
+        global widthVid, heightVid, fpsVid, source_video, output_movie, capture
+        self.groupSource.setEnabled(False)
+        self.groupModels.setEnabled(False)
+        self.groupOption.setEnabled(False)
+        if self.rdbCamera.isChecked():
             self.rdbVideoFile.setEnabled(False)
             self.listCam.setEnabled(False)
             self.txtLog.append(
                 f"{self.date_time.toString('hh:mm:ss dd/MM/yyyy')}: Start Webcam ({self.listCam.currentText()})")
             self.btnStop.setEnabled(True)
             self.btnStart.setEnabled(False)
+            source_video = self.listCam.currentIndex()
 
-            global sourceVideo
-            sourceVideo = self.listCam.currentIndex()
-
-            # Opencv QThread
-            self.worker = ThreadClass()
-            self.worker.imageUpdate.connect(self.opencv_emit)
-            self.worker.fps.connect(self.getFPS)
-            self.worker.start()
-
-        except Exception as error:
-            pass
-
-    def StopWebCam(self):
-        self.rdbVideoFile.setEnabled(True)
-        self.listCam.setEnabled(True)
-        self.txtLog.append(
-            f"{self.date_time.toString('hh:mm:ss dd/MM/yyyy')}: Stop Webcam ({self.listCam.currentText()})")
-        self.btnStart.setEnabled(True)
-        self.btnStop.setEnabled(False)
-        # Set Icon back to stop state
-        self.worker.stop()
-
-    def StartVideo(self):
-        try:
+        elif self.rdbVideoFile.isChecked():
             self.rdbCamera.setEnabled(False)
             self.btnSelect.setEnabled(False)
             self.txtLog.append(f"{self.date_time.toString('hh:mm:ss dd/MM/yyyy')}: Start Video")
             self.btnStop.setEnabled(True)
             self.btnStart.setEnabled(False)
+            source_video = self.pathVideoFile.text()
 
-            global sourceVideo
-            sourceVideo = self.pathVideoFile.text()
+        capture = cv.VideoCapture(source_video)
+        widthVid = int(capture.get(cv.CAP_PROP_FRAME_WIDTH))
+        heightVid = int(capture.get(cv.CAP_PROP_FRAME_HEIGHT))
+        fpsVid = int(capture.get(cv.CAP_PROP_FPS))
 
-            # Opencv QThread
-            self.worker = ThreadClass()
-            self.worker.imageUpdate.connect(self.opencv_emit)
-            self.worker.fps.connect(self.getFPS)
-            self.worker.start()
+        if self.ckbExportCSV.isChecked():
+            with open('traffic_measurement.csv', 'w') as f:
+                writer = csv.writer(f)
+                csv_line = 'Vehicle Type/Size, Vehicle Color, Vehicle Movement Direction, Vehicle Speed (km/h)'
+                writer.writerows([csv_line.split(',')])
+        if self.ckbExportVideo.isChecked():
+            fourcc = cv.VideoWriter_fourcc(*'XVID')
+            output_movie = cv.VideoWriter('output.avi', fourcc, fpsVid, (widthVid, heightVid))
 
-        except Exception as error:
-            pass
-
-    def StopVideo(self):
-        self.rdbCamera.setEnabled(True)
-        self.btnSelect.setEnabled(True)
-        self.txtLog.append(f"{self.date_time.toString('hh:mm:ss dd/MM/yyyy')}: Stop Video")
-        self.btnStart.setEnabled(True)
-        self.btnStop.setEnabled(False)
-        # Set Icon back to stop state
-        self.worker.stop()
-
-    def StartDetection(self):
-        if self.rdbCamera.isChecked():
-            self.StartWebCam()
-        elif self.rdbVideoFile.isChecked():
-            self.StartVideo()
+        # Opencv QThread
+        self.worker = ThreadClass()
+        self.worker.imageUpdate.connect(self.opencv_emit)
+        self.worker.fps.connect(self.getFPS)
+        self.worker.start()
 
     def StopDetection(self):
+        self.groupSource.setEnabled(True)
+        self.groupModels.setEnabled(True)
+        self.groupOption.setEnabled(True)
         if self.rdbCamera.isChecked():
-            self.StopWebCam()
+            self.rdbVideoFile.setEnabled(True)
+            self.listCam.setEnabled(True)
+            self.txtLog.append(
+                f"{self.date_time.toString('hh:mm:ss dd/MM/yyyy')}: Stop Webcam ({self.listCam.currentText()})")
+            self.btnStart.setEnabled(True)
+            self.btnStop.setEnabled(False)
+            self.worker.stop()
         elif self.rdbVideoFile.isChecked():
-            self.StopVideo()
+            self.rdbCamera.setEnabled(True)
+            self.btnSelect.setEnabled(True)
+            self.txtLog.append(f"{self.date_time.toString('hh:mm:ss dd/MM/yyyy')}: Stop Video")
+            self.btnStart.setEnabled(True)
+            self.btnStop.setEnabled(False)
+            self.worker.stop()
 
     def exit_program(self):
         self.ThreadActive = False
@@ -268,11 +263,8 @@ class ThreadClass(QThread):
     fps = pyqtSignal(int)
 
     def run(self):
-        capture = cv.VideoCapture(sourceVideo)
         capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
         capture.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-
-        total_passed_vehicle = 0  # using it to count vehicles
 
         # By default I use an "SSD with Mobilenet" model here. See the detection model zoo (
         # https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md)
@@ -331,6 +323,7 @@ class ThreadClass(QThread):
                 while self.ThreadActive:
                     (ret, frame_cap) = capture.read()
                     if not ret:
+                        capture.release()
                         break
                     input_frame = frame_cap
                     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
@@ -388,19 +381,25 @@ class ThreadClass(QThread):
 
                     if csv_line != 'not_available':
                         (size, color, direction, speed) = csv_line.split(',')
-                        infor_vehicle = [QStandardItem(size), QStandardItem(color), QStandardItem(direction), QStandardItem(speed)]
+                        infor_vehicle = [QStandardItem(size), QStandardItem(color), QStandardItem(direction),
+                                         QStandardItem(speed)]
                         table_model.insertRow(table_model.rowCount(), infor_vehicle)
-                        with open('traffic_measurement.csv', 'a') as f:
-                            writer = csv.writer(f)
+                        if ckbExportCSV.isChecked():
+                            with open('traffic_measurement.csv', 'a') as f:
+                                writer = csv.writer(f)
+                                writer.writerows([csv_line.split(',')])
 
-                            writer.writerows([csv_line.split(',')])
-
+                    if ckbExportVideo.isChecked():
+                        output_movie.write(input_frame)
                     new_frame_time = time.time()
                     fpsValue = 1 / (new_frame_time - prev_frame_time)
                     prev_frame_time = new_frame_time
                     if ret:
                         self.imageUpdate.emit(input_frame)
                         self.fps.emit(int(fpsValue))
+
+                capture.release()
+                self.stop()
 
     def stop(self):
         self.ThreadActive = False

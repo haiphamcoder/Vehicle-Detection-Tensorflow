@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1311</width>
+    <width>1317</width>
     <height>954</height>
    </rect>
   </property>
@@ -382,14 +382,14 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QCheckBox" name="checkBox_2">
+            <widget class="QCheckBox" name="ckbExportCSV">
              <property name="text">
               <string>Export CSV file</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBox">
+            <widget class="QCheckBox" name="ckbExportVideo">
              <property name="text">
               <string>Export output video</string>
              </property>
@@ -721,7 +721,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1311</width>
+     <width>1317</width>
      <height>26</height>
     </rect>
    </property>
