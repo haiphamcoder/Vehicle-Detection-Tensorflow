@@ -3,7 +3,6 @@ import sys
 from PyQt5.QtWidgets import QApplication
 from MainDashboard import MainDashboard
 
-
 if __name__ == "__main__":
     app = QApplication([])
     window = MainDashboard()

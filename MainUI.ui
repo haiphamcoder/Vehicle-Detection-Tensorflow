@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1202</width>
+    <width>1311</width>
     <height>954</height>
    </rect>
   </property>
@@ -419,8 +419,15 @@
           <property name="title">
            <string>Setting</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_13">
-           <item row="0" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="title">
+              <string>ROI Position</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QGroupBox" name="groupBox">
              <property name="title">
               <string>ROI line</string>
@@ -435,45 +442,14 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label">
-                  <property name="text">
-                   <string>X: </string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="3">
-                 <widget class="QSpinBox" name="spinBox_2"/>
-                </item>
-                <item row="1" column="3">
-                 <widget class="QSpinBox" name="spinBox_4"/>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_6">
-                  <property name="text">
-                   <string>W: </string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QLabel" name="label_4">
-                  <property name="text">
-                   <string>Y: </string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinBox_3"/>
+                 <widget class="QSpinBox" name="spinY"/>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QSpinBox" name="spinBox"/>
+                 <widget class="QSpinBox" name="spinX"/>
                 </item>
-                <item row="2" column="0">
-                 <widget class="QCheckBox" name="checkBox_3">
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
+                <item row="1" column="3">
+                 <widget class="QSpinBox" name="spinH"/>
                 </item>
                 <item row="2" column="1">
                  <widget class="QLabel" name="label_8">
@@ -488,6 +464,27 @@
                   </property>
                  </widget>
                 </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_6">
+                  <property name="text">
+                   <string>W: </string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>X: </string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QCheckBox" name="ckbDrawROI">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
                 <item row="2" column="3">
                  <widget class="QPushButton" name="pushButton">
                   <property name="minimumSize">
@@ -497,9 +494,19 @@
                    </size>
                   </property>
                   <property name="text">
-                   <string>SET</string>
+                   <string>RESET</string>
                   </property>
                  </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QLabel" name="label_4">
+                  <property name="text">
+                   <string>Y: </string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QSpinBox" name="spinW"/>
                 </item>
                </layout>
               </item>
@@ -682,7 +689,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1202</width>
+     <width>1311</width>
      <height>26</height>
     </rect>
    </property>
