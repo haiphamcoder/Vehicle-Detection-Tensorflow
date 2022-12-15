@@ -425,6 +425,22 @@
              <property name="title">
               <string>ROI Position</string>
              </property>
+             <layout class="QGridLayout" name="gridLayout_13">
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Pos:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="spinPosROI">
+                <property name="maximum">
+                 <number>10000</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
@@ -443,13 +459,25 @@
                  </widget>
                 </item>
                 <item row="0" column="3">
-                 <widget class="QSpinBox" name="spinY"/>
+                 <widget class="QSpinBox" name="spinY">
+                  <property name="maximum">
+                   <number>10000</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QSpinBox" name="spinX"/>
+                 <widget class="QSpinBox" name="spinX">
+                  <property name="maximum">
+                   <number>10000</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="3">
-                 <widget class="QSpinBox" name="spinH"/>
+                 <widget class="QSpinBox" name="spinH">
+                  <property name="maximum">
+                   <number>10000</number>
+                  </property>
+                 </widget>
                 </item>
                 <item row="2" column="1">
                  <widget class="QLabel" name="label_8">
@@ -506,7 +534,11 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinW"/>
+                 <widget class="QSpinBox" name="spinW">
+                  <property name="maximum">
+                   <number>10000</number>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -603,7 +635,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
          <item row="0" column="0">
-          <widget class="QTableView" name="table"/>
+          <widget class="QTableView" name="tblTraffic"/>
          </item>
         </layout>
        </widget>

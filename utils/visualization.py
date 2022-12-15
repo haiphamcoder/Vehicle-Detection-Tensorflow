@@ -5,7 +5,6 @@ import PIL.ImageColor as ImageColor
 import PIL.ImageDraw as ImageDraw
 import PIL.ImageFont as ImageFont
 import numpy
-import os
 from utils.speed_and_direction_prediction_module import speed_prediction
 from utils.color_recognition_module import color_recognition_api
 

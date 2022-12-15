@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QHeaderView, QFileDialog
-from PyQt5.QtCore import QFile, QTimer, QDateTime, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QFile, QTimer, QDateTime, QThread, pyqtSignal, pyqtSlot, QAbstractTableModel
 from PyQt5.QtMultimedia import QCameraInfo
-from PyQt5.QtGui import QStandardItemModel, QImage, QPixmap
+from PyQt5.QtGui import QStandardItemModel, QImage, QPixmap, QStandardItem
 from PyQt5 import uic
 import os
 import sys
@@ -46,12 +46,13 @@ class MainDashboard(QMainWindow):
         self.btnStop.clicked.connect(self.StopDetection)
         self.rdbModelMobilenetV1.setChecked(True)
 
+        global  table_model
         table_model = QStandardItemModel()
         header = ['Vehicle Type/Size', 'Vehicle Color', 'Vehicle Movement Direction', 'Vehicle Speed (km/h)']
         table_model.setHorizontalHeaderLabels(header)
-        self.table.setModel(table_model)
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.tblTraffic.setModel(table_model)
+        self.tblTraffic.horizontalHeader().setStretchLastSection(True)
+        self.tblTraffic.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.lcd_timer = QTimer()
         self.lcd_timer.timeout.connect(self.showTime)
@@ -68,6 +69,21 @@ class MainDashboard(QMainWindow):
         self.rdbCamera.toggled.connect(lambda: self.buttonState(self.rdbCamera))
         self.rdbVideoFile.toggled.connect(lambda: self.buttonState(self.rdbVideoFile))
         self.btnSelect.clicked.connect(self.openFileNameDialog)
+
+        global ckbDrawROI
+        ckbDrawROI = self.ckbDrawROI
+        ckbDrawROI.setChecked(True)
+        global spinPosROI, spinX, spinY, spinW, spinH
+        spinPosROI = self.spinPosROI
+        spinPosROI.setValue(200)
+        spinX = self.spinX
+        spinX.setValue(0)
+        spinY = self.spinY
+        spinY.setValue(200)
+        spinW = self.spinW
+        spinW.setValue(640)
+        spinH = self.spinH
+        spinH.setValue(4)
 
         self.actionQuit.triggered.connect(self.exit_program)
         self.btnClose.clicked.connect(self.exit_program)
@@ -327,7 +343,7 @@ class ThreadClass(QThread):
 
                     # Visualization of the results of a detection.
                     vis = Visualization()
-
+                    vis.ROI_POSITION = spinPosROI.value()
                     (counter, csv_line) = vis.visualize_boxes_and_labels_on_image_array(capture.get(1), input_frame,
                                                                                         np.squeeze(boxes),
                                                                                         np.squeeze(classes).astype(
@@ -345,14 +361,20 @@ class ThreadClass(QThread):
                                (0, 0xFF, 0xFF), 2, cv.FONT_HERSHEY_SIMPLEX, )
 
                     # when the vehicle passed over line and counted, make the color of ROI line green
-                    if counter == 1:
-                        cv.line(input_frame, (0, 200), (640, 200), (0, 0xFF, 0), 3)
-                    else:
-                        cv.line(input_frame, (0, 200), (640, 300), (0, 0, 0xFF), 3)
+                    if ckbDrawROI.isChecked():
+                        if counter == 1:
+                            cv.line(input_frame, (spinX.value(), spinY.value()), (spinW.value(), spinY.value()),
+                                    (0, 0xFF, 0), 3)
+                        else:
+                            cv.line(input_frame, (spinX.value(), spinY.value()), (spinW.value(), spinY.value()),
+                                    (0, 0, 0xFF), 3)
+
+                        cv.putText(input_frame, 'ROI Line', (spinW.value() - 100, spinY.value() - 10), font, 0.6,
+                                   (0, 0, 0xFF), 2, cv.LINE_AA, )
 
                     # insert information text to video frame
                     cv.rectangle(input_frame, (10, 275), (230, 337), (180, 132, 109), -1)
-                    cv.putText(input_frame, 'ROI Line', (545, 190), font, 0.6, (0, 0, 0xFF), 2, cv.LINE_AA, )
+
                     cv.putText(input_frame, 'LAST PASSED VEHICLE INFO', (11, 290), font, 0.5, (0xFF, 0xFF, 0xFF), 1,
                                cv.FONT_HERSHEY_SIMPLEX, )
                     cv.putText(input_frame, '-Movement Direction: ' + direction, (14, 302), font, 0.4,
@@ -365,9 +387,12 @@ class ThreadClass(QThread):
                                cv.FONT_HERSHEY_COMPLEX_SMALL, )
 
                     if csv_line != 'not_available':
+                        (size, color, direction, speed) = csv_line.split(',')
+                        infor_vehicle = [QStandardItem(size), QStandardItem(color), QStandardItem(direction), QStandardItem(speed)]
+                        table_model.insertRow(table_model.rowCount(), infor_vehicle)
                         with open('traffic_measurement.csv', 'a') as f:
                             writer = csv.writer(f)
-                            (size, color, direction, speed) = csv_line.split(',')
+
                             writer.writerows([csv_line.split(',')])
 
                     new_frame_time = time.time()
