@@ -12,48 +12,32 @@ from utils.color_recognition_module import color_recognition_api
 class Visualization:
     is_vehicle_detected = [0]
     ROI_POSITION = 200
-    STANDARD_COLORS = [
-        'AliceBlue', 'Chartreuse', 'Aqua', 'Aquamarine', 'Azure', 'Beige', 'Bisque',
-        'BlanchedAlmond', 'BlueViolet', 'BurlyWood', 'CadetBlue', 'AntiqueWhite',
-        'Chocolate', 'Coral', 'CornflowerBlue', 'Cornsilk', 'Crimson', 'Cyan',
-        'DarkCyan', 'DarkGoldenRod', 'DarkGrey', 'DarkKhaki', 'DarkOrange',
-        'DarkOrchid', 'DarkSalmon', 'DarkSeaGreen', 'DarkTurquoise', 'DarkViolet',
-        'DeepPink', 'DeepSkyBlue', 'DodgerBlue', 'FireBrick', 'FloralWhite',
-        'ForestGreen', 'Fuchsia', 'Gainsboro', 'GhostWhite', 'Gold', 'GoldenRod',
-        'Salmon', 'Tan', 'HoneyDew', 'HotPink', 'IndianRed', 'Ivory', 'Khaki',
-        'Lavender', 'LavenderBlush', 'LawnGreen', 'LemonChiffon', 'LightBlue',
-        'LightCoral', 'LightCyan', 'LightGoldenRodYellow', 'LightGray', 'LightGrey',
-        'LightGreen', 'LightPink', 'LightSalmon', 'LightSeaGreen', 'LightSkyBlue',
-        'LightSlateGray', 'LightSlateGrey', 'LightSteelBlue', 'LightYellow', 'Lime',
-        'LimeGreen', 'Linen', 'Magenta', 'MediumAquaMarine', 'MediumOrchid',
-        'MediumPurple', 'MediumSeaGreen', 'MediumSlateBlue', 'MediumSpringGreen',
-        'MediumTurquoise', 'MediumVioletRed', 'MintCream', 'MistyRose', 'Moccasin',
-        'NavajoWhite', 'OldLace', 'Olive', 'OliveDrab', 'Orange', 'OrangeRed',
-        'Orchid', 'PaleGoldenRod', 'PaleGreen', 'PaleTurquoise', 'PaleVioletRed',
-        'PapayaWhip', 'PeachPuff', 'Peru', 'Pink', 'Plum', 'PowderBlue', 'Purple',
-        'Red', 'RosyBrown', 'RoyalBlue', 'SaddleBrown', 'Green', 'SandyBrown',
-        'SeaGreen', 'SeaShell', 'Sienna', 'Silver', 'SkyBlue', 'SlateBlue',
-        'SlateGray', 'SlateGrey', 'Snow', 'SpringGreen', 'SteelBlue', 'GreenYellow',
-        'Teal', 'Thistle', 'Tomato', 'Turquoise', 'Violet', 'Wheat', 'White',
-        'WhiteSmoke', 'Yellow', 'YellowGreen'
-    ]
+    STANDARD_COLORS = ['AliceBlue', 'Chartreuse', 'Aqua', 'Aquamarine', 'Azure', 'Beige', 'Bisque', 'BlanchedAlmond',
+                       'BlueViolet', 'BurlyWood', 'CadetBlue', 'AntiqueWhite', 'Chocolate', 'Coral', 'CornflowerBlue',
+                       'Cornsilk', 'Crimson', 'Cyan', 'DarkCyan', 'DarkGoldenRod', 'DarkGrey', 'DarkKhaki',
+                       'DarkOrange', 'DarkOrchid', 'DarkSalmon', 'DarkSeaGreen', 'DarkTurquoise', 'DarkViolet',
+                       'DeepPink', 'DeepSkyBlue', 'DodgerBlue', 'FireBrick', 'FloralWhite', 'ForestGreen', 'Fuchsia',
+                       'Gainsboro', 'GhostWhite', 'Gold', 'GoldenRod', 'Salmon', 'Tan', 'HoneyDew', 'HotPink',
+                       'IndianRed', 'Ivory', 'Khaki', 'Lavender', 'LavenderBlush', 'LawnGreen', 'LemonChiffon',
+                       'LightBlue', 'LightCoral', 'LightCyan', 'LightGoldenRodYellow', 'LightGray', 'LightGrey',
+                       'LightGreen', 'LightPink', 'LightSalmon', 'LightSeaGreen', 'LightSkyBlue', 'LightSlateGray',
+                       'LightSlateGrey', 'LightSteelBlue', 'LightYellow', 'Lime', 'LimeGreen', 'Linen', 'Magenta',
+                       'MediumAquaMarine', 'MediumOrchid', 'MediumPurple', 'MediumSeaGreen', 'MediumSlateBlue',
+                       'MediumSpringGreen', 'MediumTurquoise', 'MediumVioletRed', 'MintCream', 'MistyRose', 'Moccasin',
+                       'NavajoWhite', 'OldLace', 'Olive', 'OliveDrab', 'Orange', 'OrangeRed', 'Orchid', 'PaleGoldenRod',
+                       'PaleGreen', 'PaleTurquoise', 'PaleVioletRed', 'PapayaWhip', 'PeachPuff', 'Peru', 'Pink', 'Plum',
+                       'PowderBlue', 'Purple', 'Red', 'RosyBrown', 'RoyalBlue', 'SaddleBrown', 'Green', 'SandyBrown',
+                       'SeaGreen', 'SeaShell', 'Sienna', 'Silver', 'SkyBlue', 'SlateBlue', 'SlateGray', 'SlateGrey',
+                       'Snow', 'SpringGreen', 'SteelBlue', 'GreenYellow', 'Teal', 'Thistle', 'Tomato', 'Turquoise',
+                       'Violet', 'Wheat', 'White', 'WhiteSmoke', 'Yellow', 'YellowGreen']
 
     def __init__(self):
         pass
 
-
-    def visualize_boxes_and_labels_on_image_array(self, current_frame_number, image,
-                                              boxes,
-                                              classes,
-                                              scores,
-                                              category_index,
-                                              instance_masks=None,
-                                              keypoints=None,
-                                              use_normalized_coordinates=False,
-                                              max_boxes_to_draw=20,
-                                              min_score_thresh=.5,
-                                              agnostic_mode=False,
-                                              line_thickness=4):
+    def visualize_boxes_and_labels_on_image_array(self, current_frame_number, image, boxes, classes, scores,
+                                                  category_index, instance_masks=None, keypoints=None,
+                                                  use_normalized_coordinates=False, max_boxes_to_draw=20,
+                                                  min_score_thresh=.5, agnostic_mode=False, line_thickness=4):
         """Overlay labeled boxes on an image with formatted scores and label names.
 
         This function groups boxes that correspond to the same location
@@ -114,8 +98,7 @@ class Visualization:
                             class_name = category_index[classes[i]]['name']
                         else:
                             class_name = 'N/A'
-                        display_str = '{}: {}%'.format(
-                            class_name, int(100*scores[i]))
+                        display_str = '{}: {}%'.format(class_name, int(100 * scores[i]))
                     else:
                         display_str = 'score: {}%'.format(int(100 * scores[i]))
 
@@ -123,54 +106,43 @@ class Visualization:
                     if agnostic_mode:
                         box_to_color_map[box] = 'DarkOrange'
                     else:
-                        box_to_color_map[box] = self.STANDARD_COLORS[
-                            classes[i] % len(self.STANDARD_COLORS)]
+                        box_to_color_map[box] = self.STANDARD_COLORS[classes[i] % len(self.STANDARD_COLORS)]
 
         # Draw all boxes onto image.
         for box, color in box_to_color_map.items():
             ymin, xmin, ymax, xmax = box
             if instance_masks is not None:
-                self.draw_mask_on_image_array(
-                    image,
-                    box_to_instance_masks_map[box],
-                    color=color
-                )
+                self.draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
             display_str_list = box_to_display_str_map[box]
             # we are interested just vehicles (i.e. cars and trucks)
-            if (("car" in display_str_list[0]) or ("truck" in display_str_list[0]) or ("bus" in display_str_list[0])):
+            if ("car" in display_str_list[0]) or ("truck" in display_str_list[0]) or ("bus" in display_str_list[0]):
                 is_vehicle_detected, csv_line, update_csv = self.draw_bounding_box_on_image_array(current_frame_number,
-                                                                                            image,
-                                                                                            ymin,
-                                                                                            xmin,
-                                                                                            ymax,
-                                                                                            xmax,
-                                                                                            color=color,
-                                                                                            thickness=line_thickness,
-                                                                                            display_str_list=box_to_display_str_map[
-                                                                                                box],
-                                                                                            use_normalized_coordinates=use_normalized_coordinates)
+                                                                                                  image, ymin, xmin,
+                                                                                                  ymax, xmax,
+                                                                                                  color=color,
+                                                                                                  thickness=line_thickness,
+                                                                                                  display_str_list=
+                                                                                                  box_to_display_str_map[
+                                                                                                      box],
+                                                                                                  use_normalized_coordinates=use_normalized_coordinates)
 
                 if keypoints is not None:
-                    self.draw_keypoints_on_image_array(
-                        image,
-                        box_to_keypoints_map[box],
-                        color=color,
-                        radius=line_thickness / 2,
-                        use_normalized_coordinates=use_normalized_coordinates)
+                    self.draw_keypoints_on_image_array(image, box_to_keypoints_map[box], color=color,
+                                                       radius=line_thickness / 2,
+                                                       use_normalized_coordinates=use_normalized_coordinates)
 
-        if(1 in is_vehicle_detected):
+        if 1 in is_vehicle_detected:
             counter = 1
             del is_vehicle_detected[:]
             is_vehicle_detected = []
-            if(class_name == "boat"):
+            if class_name == "boat":
                 class_name = "truck"
             csv_line_util = class_name + "," + csv_line
 
         return counter, csv_line_util
 
-
-    def draw_mask_on_image_array(image, mask, color='red', alpha=0.7):
+    def draw_mask_on_image_array(self, image, mask, color='red', alpha=0.7):
         """Draws mask on an image.
 
         Args:
@@ -192,23 +164,14 @@ class Visualization:
         rgb = ImageColor.getrgb(color)
         pil_image = Image.fromarray(image)
 
-        solid_color = np.expand_dims(
-            np.ones_like(mask), axis=2) * np.reshape(list(rgb), [1, 1, 3])
+        solid_color = np.expand_dims(np.ones_like(mask), axis=2) * np.reshape(list(rgb), [1, 1, 3])
         pil_solid_color = Image.fromarray(np.uint8(solid_color)).convert('RGBA')
-        pil_mask = Image.fromarray(np.uint8(255.0*alpha*mask)).convert('L')
+        pil_mask = Image.fromarray(np.uint8(255.0 * alpha * mask)).convert('L')
         pil_image = Image.composite(pil_solid_color, pil_image, pil_mask)
         np.copyto(image, np.array(pil_image.convert('RGB')))
 
-
-    def draw_bounding_box_on_image_array(self,current_frame_number, image,
-                                        ymin,
-                                        xmin,
-                                        ymax,
-                                        xmax,
-                                        color='red',
-                                        thickness=4,
-                                        display_str_list=(),
-                                        use_normalized_coordinates=True):
+    def draw_bounding_box_on_image_array(self, current_frame_number, image, ymin, xmin, ymax, xmax, color='red',
+                                         thickness=4, display_str_list=(), use_normalized_coordinates=True):
         """Adds a bounding box to an image (numpy array).
 
         Args:
@@ -226,18 +189,14 @@ class Visualization:
             coordinates as absolute.
         """
         image_pil = Image.fromarray(np.uint8(image)).convert('RGB')
-        is_vehicle_detected, csv_line, update_csv = self.draw_bounding_box_on_image(current_frame_number, image_pil, ymin, xmin, ymax, xmax, color,
-                                                                            thickness, display_str_list,
-                                                                            use_normalized_coordinates)
+        is_vehicle_detected, csv_line, update_csv = self.draw_bounding_box_on_image(current_frame_number, image_pil,
+                                                                                    ymin, xmin, ymax, xmax, color,
+                                                                                    thickness, display_str_list,
+                                                                                    use_normalized_coordinates)
         np.copyto(image, np.array(image_pil))
         return is_vehicle_detected, csv_line, update_csv
 
-
-    def draw_keypoints_on_image_array(self,image,
-                                    keypoints,
-                                    color='red',
-                                    radius=2,
-                                    use_normalized_coordinates=True):
+    def draw_keypoints_on_image_array(self, image, keypoints, color='red', radius=2, use_normalized_coordinates=True):
         """Draws keypoints on an image (numpy array).
 
         Args:
@@ -249,16 +208,10 @@ class Visualization:
             relative to the image.  Otherwise treat them as absolute.
         """
         image_pil = Image.fromarray(np.uint8(image)).convert('RGB')
-        self.draw_keypoints_on_image(image_pil, keypoints, color, radius,
-                                use_normalized_coordinates)
+        self.draw_keypoints_on_image(image_pil, keypoints, color, radius, use_normalized_coordinates)
         np.copyto(image, np.array(image_pil))
 
-
-    def draw_keypoints_on_image(self,image,
-                                keypoints,
-                                color='red',
-                                radius=2,
-                                use_normalized_coordinates=True):
+    def draw_keypoints_on_image(self, image, keypoints, color='red', radius=2, use_normalized_coordinates=True):
         """Draws keypoints on an image.
 
         Args:
@@ -277,20 +230,11 @@ class Visualization:
             keypoints_x = tuple([im_width * x for x in keypoints_x])
             keypoints_y = tuple([im_height * y for y in keypoints_y])
         for keypoint_x, keypoint_y in zip(keypoints_x, keypoints_y):
-            draw.ellipse([(keypoint_x - radius, keypoint_y - radius),
-                        (keypoint_x + radius, keypoint_y + radius)],
-                        outline=color, fill=color)
+            draw.ellipse([(keypoint_x - radius, keypoint_y - radius), (keypoint_x + radius, keypoint_y + radius)],
+                         outline=color, fill=color)
 
-
-    def draw_bounding_box_on_image(self,current_frame_number, image,
-                                ymin,
-                                xmin,
-                                ymax,
-                                xmax,
-                                color='red',
-                                thickness=4,
-                                display_str_list=(),
-                                use_normalized_coordinates=True):
+    def draw_bounding_box_on_image(self, current_frame_number, image, ymin, xmin, ymax, xmax, color='red', thickness=4,
+                                   display_str_list=(), use_normalized_coordinates=True):
         """Adds a bounding box to an image.
 
         Each string in display_str_list is displayed on a separate line above the
@@ -320,25 +264,29 @@ class Visualization:
         draw = ImageDraw.Draw(image)
         im_width, im_height = image.size
         if use_normalized_coordinates:
-            (left, right, top, bottom) = (xmin * im_width, xmax * im_width,
-                                        ymin * im_height, ymax * im_height)
+            (left, right, top, bottom) = (xmin * im_width, xmax * im_width, ymin * im_height, ymax * im_height)
         else:
             (left, right, top, bottom) = (xmin, xmax, ymin, ymax)
-        draw.line([(left, top), (left, bottom), (right, bottom),
-                (right, top), (left, top)], width=thickness, fill=color)
+        draw.line([(left, top), (left, bottom), (right, bottom), (right, top), (left, top)], width=thickness,
+                  fill=color)
 
         predicted_speed = "n.a."  # means not available, it is just initialization
         predicted_direction = "n.a."  # means not available, it is just initialization
 
-        detected_vehicle_image = image_temp[int(
-            top):int(bottom), int(left):int(right)]
+        detected_vehicle_image = image_temp[int(top):int(bottom), int(left):int(right)]
 
-        if(bottom > self.ROI_POSITION):  # if the vehicle get in ROI area, vehicle predicted_speed predicted_color algorithms are called - 200 is an arbitrary value, for my case it looks very well to set position of ROI line at y pixel 200
-            predicted_direction, predicted_speed,  is_vehicle_detected, update_csv = speed_prediction.predict_speed(
-                top, bottom, right, left, current_frame_number, detected_vehicle_image, self.ROI_POSITION)
+        if bottom > self.ROI_POSITION:  # if the vehicle get in ROI area, vehicle predicted_speed
+            # predicted_color algorithms are called - 200 is an arbitrary value, for my case it looks very well to
+            # set position of ROI line at y pixel 200
+            predicted_direction, predicted_speed, is_vehicle_detected, update_csv = speed_prediction.predict_speed(top,
+                                                                                                                   bottom,
+                                                                                                                   right,
+                                                                                                                   left,
+                                                                                                                   current_frame_number,
+                                                                                                                   detected_vehicle_image,
+                                                                                                                   self.ROI_POSITION)
 
-        predicted_color = color_recognition_api.color_recognition(
-            detected_vehicle_image)
+        predicted_color = color_recognition_api.color_recognition(detected_vehicle_image)
 
         try:
             font = ImageFont.truetype('arial.ttf', 16)
@@ -349,9 +297,7 @@ class Visualization:
         # box exceeds the top of the image, stack the strings below the bounding box
         # instead of above.
         display_str_list[0] = predicted_color + " " + display_str_list[0]
-        csv_line = predicted_color + "," + \
-            str(predicted_direction) + "," + \
-            str(predicted_speed)  # csv line created
+        csv_line = predicted_color + "," + str(predicted_direction) + "," + str(predicted_speed)  # csv line created
         display_str_heights = [font.getsize(ds)[1] for ds in display_str_list]
 
         # Each display_str has a top and bottom margin of 0.05x.
@@ -366,14 +312,8 @@ class Visualization:
         for display_str in display_str_list[::-1]:
             text_width, text_height = font.getsize(display_str)
             margin = np.ceil(0.05 * text_height)
-            draw.rectangle(
-                [(left, text_bottom - text_height - 2 * margin), (left + text_width,
-                                                                text_bottom)],
-                fill=color)
-            draw.text(
-                (left + margin, text_bottom - text_height - margin),
-                display_str,
-                fill='black',
-                font=font)
+            draw.rectangle([(left, text_bottom - text_height - 2 * margin), (left + text_width, text_bottom)],
+                           fill=color)
+            draw.text((left + margin, text_bottom - text_height - margin), display_str, fill='black', font=font)
             text_bottom -= text_height - 2 * margin
             return is_vehicle_detected, csv_line, update_csv

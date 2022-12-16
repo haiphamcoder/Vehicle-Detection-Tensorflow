@@ -14,6 +14,13 @@ import tensorflow as tf
 from utils import label_map_util
 from utils.visualization import Visualization
 
+# Assume that the number of cores per socket in the machine is denoted as NUM_PARALLEL_EXEC_UNITS
+#  when NUM_PARALLEL_EXEC_UNITS=0 the system chooses appropriate settings
+NUM_PARALLEL_EXEC_UNITS = 4
+config = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=NUM_PARALLEL_EXEC_UNITS, inter_op_parallelism_threads=2,
+                                  allow_soft_placement=True, device_count={'CPU': NUM_PARALLEL_EXEC_UNITS})
+session = tf.compat.v1.Session(config=config)
+
 
 def cvt_cv_qt(image):
     rgb_img = cv.cvtColor(src=image, code=cv.COLOR_BGR2RGB)
@@ -44,6 +51,7 @@ class MainDashboard(QMainWindow):
         self.listCam.addItems([c.description() for c in online_cam])
         self.btnStart.clicked.connect(self.StartDetection)
         self.btnStop.clicked.connect(self.StopDetection)
+        self.btnStop.setEnabled(False)
         self.rdbModelMobilenetV1.setChecked(True)
 
         global table_model
@@ -87,9 +95,10 @@ class MainDashboard(QMainWindow):
 
         global ckbExportCSV
         ckbExportCSV = self.ckbExportCSV
-        ckbExportCSV.setChecked(True)
+        ckbExportCSV.setChecked(False)
         global ckbExportVideo
         ckbExportVideo = self.ckbExportVideo
+        ckbExportVideo.setChecked(False)
         self.actionQuit.triggered.connect(self.exit_program)
         self.btnClose.clicked.connect(self.exit_program)
 
@@ -101,6 +110,7 @@ class MainDashboard(QMainWindow):
                                                    options=options)
         if file_name:
             self.pathVideoFile.setText(file_name)
+            self.btnStart.setEnabled(True)
 
     def showTime(self):
         self.date_time = QDateTime.currentDateTime()
@@ -149,20 +159,36 @@ class MainDashboard(QMainWindow):
                 self.listCam.setEnabled(True)
                 self.pathVideoFile.setEnabled(False)
                 self.btnSelect.setEnabled(False)
+                if self.listCam.count() == 0:
+                    self.btnStart.setEnabled(False)
+                else:
+                    self.btnStart.setEnabled(True)
             else:
                 self.listCam.setEnabled(False)
                 self.pathVideoFile.setEnabled(True)
                 self.btnSelect.setEnabled(True)
+                if self.pathVideoFile.text() == "":
+                    self.btnStart.setEnabled(False)
+                else:
+                    self.btnStart.setEnabled(True)
 
         if button.text() == "Video File":
             if button.isChecked():
                 self.listCam.setEnabled(False)
                 self.pathVideoFile.setEnabled(True)
                 self.btnSelect.setEnabled(True)
+                if self.pathVideoFile.text() == "":
+                    self.btnStart.setEnabled(False)
+                else:
+                    self.btnStart.setEnabled(True)
             else:
                 self.listCam.setEnabled(True)
                 self.pathVideoFile.setEnabled(False)
                 self.btnSelect.setEnabled(False)
+                if self.listCam.count() == 0:
+                    self.btnStart.setEnabled(False)
+                else:
+                    self.btnStart.setEnabled(True)
 
     @pyqtSlot(np.ndarray)
     def opencv_emit(self, image):
@@ -261,6 +287,7 @@ class SystemMonitor(QThread):
 class ThreadClass(QThread):
     imageUpdate = pyqtSignal(np.ndarray)
     fps = pyqtSignal(int)
+    ThreadActive = False
 
     def run(self):
         capture.set(cv.CAP_PROP_FRAME_HEIGHT, 480)

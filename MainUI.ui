@@ -211,20 +211,6 @@
          <string>Control</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_6">
-         <item row="0" column="0">
-          <widget class="QPushButton" name="btnStart">
-           <property name="text">
-            <string>Start</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="btnPause">
-           <property name="text">
-            <string>Pause</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QPushButton" name="btnStop">
            <property name="text">
@@ -232,10 +218,10 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="btnReset">
+         <item row="0" column="0">
+          <widget class="QPushButton" name="btnStart">
            <property name="text">
-            <string>Reset</string>
+            <string>Start</string>
            </property>
           </widget>
          </item>
